@@ -44,14 +44,32 @@ exports.requestHandler = function(request, response) {
 
   var messages = {results: []};
 
+  var writeData = function(){
+    var requestBody = '';
+    request.on('data', function(data){
+      requestBody += data;
+    });
+    request.on('end', function(){
+      var messageData = JSON.parse(requestBody);
+      messages.results.push(messageData);
+
+
+    })
+  }
+
+
+
   if(request.method === "POST"){
-    console.log('POST request method');
-    console.log(request.url);
     if(request.url === "/classes/messages"){
-      messages.results.push(request);
-      console.log(request);
-      console.log(messages);
+      writeData();
       statusCode = 201;
+    }
+    if(request.url === "/classes/room1"){
+      writeData();
+    }
+  } else if(request.method === "GET"){
+    if(request.url === "/classes/messages"){
+
     }
   }
 
