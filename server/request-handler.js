@@ -15,6 +15,7 @@ this file and include it in basic-server.js so that it actually works.
 
 
 var messages = {results: []};
+var messageID = 0;
 exports.requestHandler = function(request, response) {
   // Request and Response come from node's http module.
   //
@@ -56,8 +57,9 @@ exports.requestHandler = function(request, response) {
     });
     request.on('end', function(){
       var messageData = JSON.parse(requestBody);
+      messageData.messageID = messageID;
+      messageID++;
       messages.results.push(messageData);
-
     })
   }
 
@@ -68,6 +70,7 @@ exports.requestHandler = function(request, response) {
     if(request.url in validURLs){
       writeData();
       statusCode = 201;
+      console.log(messages);
     }
   }
   if(request.method === "GET"){
@@ -78,6 +81,9 @@ exports.requestHandler = function(request, response) {
     else {
       statusCode = 404;
     }
+  }
+  if(request.method === "OPTIONS"){
+    statusCode = 200;
   }
 
 

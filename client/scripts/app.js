@@ -30,7 +30,7 @@ app.send = function(message){
   };
   $.ajax({
     // always use this url
-    url: 'http://127.0.0.1:3000/1/classes/chatterbox',
+    url: 'http://127.0.0.1:3000/classes/room',
     type: 'POST',
     data: JSON.stringify(dataMessage),
     contentType: 'application/json',
@@ -53,10 +53,12 @@ app.fetch = function(room){
   setInterval(function(){
     $.ajax({
         // always use this url
-      url: 'https://api.parse.com/1/classes/chatterbox?order=-createdAt',
+      // url: 'https://api.parse.com/1/classes/chatterbox?order=-createdAt',
+      url: 'http://127.0.0.1:3000/classes/room',
       type: 'GET',
       contentType: 'application/json',
       success: function (data) {
+        data = JSON.parse(data);
         for (var i = data.results.length-1; i >= 0; i--){
           if (!_.contains(rooms, data.results[i].roomname)){
             rooms.push(data.results[i].roomname);
@@ -67,7 +69,7 @@ app.fetch = function(room){
             }
           }
           if (data.results[i].roomname === room || room === undefined) {
-            if (!_.contains( messageIds, data.results[i].objectId )){
+            if (!_.contains( messageIds, data.results[i].messageID )){
               var msg = _.escape(data.results[i].text);
               var user = _.escape(data.results[i].username);
               if (_.contains(friends, user)) {
@@ -75,7 +77,7 @@ app.fetch = function(room){
               } else {
                 $(".messages").prepend("<li>" + "<span class='user'>" + user + "</span>" + "<span class='message'>" + msg + "</span>" + "</li>");
               }
-              messageIds.push(data.results[i].objectId);
+              messageIds.push(data.results[i].messageID);
 
             }
           }
