@@ -42,9 +42,17 @@ exports.requestHandler = function(request, response) {
   // other than plain text, like JSON or HTML.
   headers['Content-Type'] = "JSON";
 
-  var testData = {
-    data: 123123,
-    other: "Your mom/mum"
+  var messages = {results: []};
+
+  if(request.method === "POST"){
+    console.log('POST request method');
+    console.log(request.url);
+    if(request.url === "/classes/messages"){
+      messages.results.push(request);
+      console.log(request);
+      console.log(messages);
+      statusCode = 201;
+    }
   }
 
 
@@ -59,7 +67,7 @@ exports.requestHandler = function(request, response) {
   //
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
-  response.end(JSON.stringify(testData));
+  response.end(JSON.stringify(messages));
 };
 
 // These headers will allow Cross-Origin Resource Sharing (CORS).
