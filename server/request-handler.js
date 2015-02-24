@@ -43,6 +43,7 @@ exports.requestHandler = function(request, response) {
   headers['Content-Type'] = "JSON";
 
   var messages = {results: []};
+  var validURLs = {'/classes/room' : '/classes/room', '/classes/messages' : '/classes/messages', '/classes/room1' : '/classes/room1'};
 
   var writeData = function(){
     var requestBody = '';
@@ -60,16 +61,25 @@ exports.requestHandler = function(request, response) {
 
 
   if(request.method === "POST"){
-    if(request.url === "/classes/messages"){
+    validURLs[request.url] = request.url;
+    if(request.url in validURLs){
       writeData();
       statusCode = 201;
     }
-    if(request.url === "/classes/room1"){
-      writeData();
+    // if(request.url === "/classes/room1"){
+    //   writeData();
+    //   statusCode = 201;
+    // }
+  }
+  if(request.method === "GET"){
+    if(request.url in validURLs){
+      statusCode = 200;
     }
-  } else if(request.method === "GET"){
-    if(request.url === "/classes/messages"){
-
+    // if(request.url === "/classes/room1"){
+    //   statusCode = 200;
+    // }
+    else {
+      statusCode = 404;
     }
   }
 
