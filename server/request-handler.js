@@ -13,6 +13,8 @@ this file and include it in basic-server.js so that it actually works.
 
 **************************************************************/
 
+
+var messages = {results: []};
 exports.requestHandler = function(request, response) {
   // Request and Response come from node's http module.
   //
@@ -41,10 +43,12 @@ exports.requestHandler = function(request, response) {
   // You will need to change this if you are sending something
   // other than plain text, like JSON or HTML.
   headers['Content-Type'] = "JSON";
-
-  var messages = {results: []};
   var validURLs = {'/classes/room' : '/classes/room', '/classes/messages' : '/classes/messages', '/classes/room1' : '/classes/room1'};
 
+  var responder = function(responseData){
+    response.write(statusCode, headers);
+    response.end(JSON.stringify(responseData));
+  }
   var writeData = function(){
     var requestBody = '';
     request.on('data', function(data){
@@ -53,7 +57,6 @@ exports.requestHandler = function(request, response) {
     request.on('end', function(){
       var messageData = JSON.parse(requestBody);
       messages.results.push(messageData);
-
 
     })
   }
@@ -66,22 +69,17 @@ exports.requestHandler = function(request, response) {
       writeData();
       statusCode = 201;
     }
-    // if(request.url === "/classes/room1"){
-    //   writeData();
-    //   statusCode = 201;
-    // }
   }
   if(request.method === "GET"){
     if(request.url in validURLs){
       statusCode = 200;
+
     }
-    // if(request.url === "/classes/room1"){
-    //   statusCode = 200;
-    // }
     else {
       statusCode = 404;
     }
   }
+
 
 
   // .writeHead() writes to the request line and headers of the response,
